@@ -4,26 +4,32 @@
 
 @section('content')
     <article>
+
         <h1>{{ $show->title }}</h1>
 
         @if($show->poster_url)
-            <p><img src="{{ asset('/images/'.$show->poster_url) }}" alt="{{ $show->title }}" width="200"></p>
+            <p><img src="{{ asset('/storage/'.$show->poster_url) }}" alt="{{ $show->title }}" width="200"></p>
         @else
             <canvas width="200" height="100" style="border:1px solid #000000;"></canvas>
         @endif
 
         @if($show->description)
-            <p><strong>Description:</strong> {{ $show->description }}</p>
+            <p><strong>Description :</strong> {{ $show->description }}</p>
         @endif
 
         @if($show->location)
-            <p><strong>Lieu de création:</strong> {{ $show->location->designation }}</p>
+            <p><strong>Lieu de diffusion :</strong> {{ $show->location->designation }}</p>
         @endif
 
-        <p><strong>Prix:</strong> {{ $show->price }} €</p>
+        <p><strong>Prix :</strong> {{ $show->price }} €</p>
 
         @if($show->bookable)
-            <p><em>Réservable</em></p>
+            <form action="{{ route('cart.store') }}" method="post">
+                @csrf
+
+                <input type="hidden" name="show_id" value="{{ $show->id }}">
+                <button type="submit" class="btn btn-outline-success">Réserver une place</button>
+            </form>
         @else
             <p><em>Non réservable</em></p>
         @endif

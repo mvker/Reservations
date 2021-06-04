@@ -3,17 +3,24 @@
 @section('title', 'Liste des shows')
 
 @section('content')
-    <!-- Menu CRUD -->
-    <ul>
-        <li>
-            <a href="{{ route('show.create') }}">Add a show</a>
-        </li>
-    </ul>
-
-    <!-- Succes notification -->
+    <!-- Success notification -->
     @if(session()->has('message'))
         <div class="alert alert-success">
             {{ session()->get('message') }}
+        </div>
+    @endif
+
+    <!-- Place added to cart notification -->
+    @if(session()->has('success'))
+        <div class="alert alert-success">
+            {{ session()->get('success') }}
+        </div>
+    @endif
+
+    <!-- No more place available notification -->
+    @if(session()->has('errror'))
+        <div class="alert alert-error">
+            {{ sessions()->get('error') }}
         </div>
     @endif
 
@@ -42,7 +49,7 @@
                 <div class="card border-secondary d-flex mx-auto mb-3" style="max-width: 20rem;">
                     <div>
                         @if($show->poster_url)
-                            <img class="text-center" src="{{ asset('/images/'.$show->poster_url) }}"
+                            <img class="text-center" src="{{ asset('/storage/'.$show->poster_url) }}"
                                  alt="{{ $show->title }}" width="260" height="380">
                         @else
                             <canvas width="200" height="400" style="border:1px solid #000000;"></canvas>
@@ -67,7 +74,7 @@
                             @endif
                         </p>
                         <a href="{{ route('show.show', $show->id) }}" target="_blank" type="button"
-                           class="btn btn-reserver-archive btn-outline-primary">Réserver</a>
+                           class="btn btn-reserver-archive btn-outline-primary">En savoir plus</a>
                     </div>
                 </div>
             @endforeach
