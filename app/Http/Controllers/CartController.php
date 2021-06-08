@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Representation;
 use App\Models\Show;
 use Gloudemans\Shoppingcart\Facades\Cart;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Symfony\Component\Console\Input\Input;
 
 /**
  * Class CartController
@@ -30,14 +34,27 @@ class CartController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return RedirectResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $show = Show::find($request->show_id);
 
+        // Get infos of the representation
+        $representationInfo = Representation::getRepresentationInfo($request->representation_id);
+        $dateAndTime = Representation::getDateAndTime($representationInfo->first()->when);
+
+        // Check if user is not logged in
+        if (!Auth::check()) {
+            return redirect()->route('login')->with('error', 'Please log in before making a purchase.');
+        }
+
         // Make sure the show is bookable
         if ($show->bookable) {
-            Cart::add($show->id, $show->title, 1, $show->price)
-                ->associate('App\Models\Show');
+            Cart::add($show->id, $show->title, $request->order_quantity, $show->price, [
+                'representation_id' => $request->representation_id,
+                'theatre'           => $representationInfo->first()->designation,
+                'date'              => $dateAndTime['date'],
+                'time'              => $dateAndTime['time']
+            ])->associate(Show::class);
 
             return redirect()->route('show.index')->with('success', 'The place has been added to the cart.');
         }
@@ -47,7 +64,7 @@ class CartController extends Controller
 
     /**
      * remove method.
-     * Removes a single item from the cart
+     * Removes an item from the cart
      * @param Request $request
      * @return RedirectResponse
      */

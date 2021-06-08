@@ -5,26 +5,31 @@
 @section('content')
     <!-- Success notification -->
     @if(session()->has('message'))
-        <div class="alert alert-success">
+        <div class="alert alert-success mt-2">
             {{ session()->get('message') }}
         </div>
     @endif
 
     <!-- Place added to cart notification -->
     @if(session()->has('success'))
-        <div class="alert alert-success">
+        <div class="alert alert-success mt-2">
             {{ session()->get('success') }}
         </div>
     @endif
 
     <!-- No more place available notification -->
-    @if(session()->has('errror'))
-        <div class="alert alert-error">
-            {{ sessions()->get('error') }}
+    @if(session()->has('error'))
+        <div class="alert alert-danger mt-2">
+            {{ session()->get('error') }}
         </div>
     @endif
 
     <h1>List of {{ $resource }}</h1>
+    @if (Auth::check() && Auth::user()->role->id === 1)
+        <h6><a href="{{ route('show.excel') }}">Download Shows list as an Excel File</a></h6>
+        <h6><a href="{{ route('show.csv') }}">Download Shows list as a CSV File</a></h6>
+        <h6><a href="{{ route('show.import') }}">Import your shows</a></h6>
+    @endif
     <div class="row pt-5">
         <div class="col-lg-8 mx-auto">
             <form action="{{ route('show.search') }}" method="GET" role="search">
@@ -49,7 +54,7 @@
                 <div class="card border-secondary d-flex mx-auto mb-3" style="max-width: 20rem;">
                     <div>
                         @if($show->poster_url)
-                            <img class="text-center" src="{{ asset('/storage/'.$show->poster_url) }}"
+                            <img class="text-center" src="{{ asset('/storage/'. $show->poster_url) }}"
                                  alt="{{ $show->title }}" width="260" height="380">
                         @else
                             <canvas width="200" height="400" style="border:1px solid #000000;"></canvas>
@@ -73,7 +78,7 @@
                                 - <em>Aucune représentation</em>
                             @endif
                         </p>
-                        <a href="{{ route('show.show', $show->id) }}" target="_blank" type="button"
+                        <a href="{{ route('show.show', $show->id) }}" type="button"
                            class="btn btn-reserver-archive btn-outline-primary">En savoir plus</a>
                     </div>
                 </div>

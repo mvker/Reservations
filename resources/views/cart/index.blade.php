@@ -26,6 +26,9 @@
                                             <div class="py-2 text-uppercase">Quantity</div>
                                         </th>
                                         <th scope="col" class="border-0 bg-light">
+                                            <div class="py-2 text-uppercase">Date & Time</div>
+                                        </th>
+                                        <th scope="col" class="border-0 bg-light">
                                             <div class="py-2 text-uppercase">Remove</div>
                                         </th>
                                     </tr>
@@ -48,7 +51,7 @@
                                                         </h5>
                                                         <span
                                                             class="text-muted font-weight-normal font-italic d-block">
-                                                        À : {{ $show->model->location->designation }}
+                                                        At : {{ $show->options->theatre }}
                                                     </span>
                                                     </div>
                                                 </div>
@@ -56,6 +59,9 @@
                                             <td class="border-0 align-middle">
                                                 <strong>{{ number_format($show->price, 2) }} €</strong></td>
                                             <td class="border-0 align-middle"><strong>{{ $show->qty }}</strong></td>
+                                            <td class="border-0 align-middle">
+                                                <strong>{{ $show->options->date . ' at ' . $show->options->time }}</strong>
+                                            </td>
                                             <td class="border-0 align-middle">
                                                 <form action="{{ route('cart.remove', $show->rowId) }}" method="post">
                                                     @csrf
@@ -106,7 +112,7 @@
                 </div>
                 @else
                     <div>
-                        <p>The cart is empty.</p>
+                        <p>Your cart is empty.</p>
                         <p>Find places for your favorite show <a href="{{ route('show.index') }}">here</a>
                         </p>
                     </div>

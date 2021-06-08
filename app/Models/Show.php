@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class Show extends Model
 {
@@ -52,6 +53,51 @@ class Show extends Model
     public function artistTypes()
     {
         return $this->belongsToMany(ArtistType::class);
+    }
+
+    /**
+     * getShows method.
+     * Retrieves all Shows present in the table.
+     * @return array
+     */
+    public static function getShows(): array
+    {
+        return DB::table('shows')
+            ->select('title', 'description', 'price')
+            ->get()
+            ->toArray();
+    }
+
+    public static function setShowArtist($artistName, $showTitle) {
+        DB::table('artists')
+            ->insert([
+                'firstname' => $artistName,
+                'lastname'  => 'laissemoiinsert'
+            ]);
+
+        $artistId = DB::table('artists')
+            ->select('id')
+            ->where('firstname', '=', $artistName)
+            ->get()
+            ->first();
+
+        DB::table('artist_type')
+            ->insert([
+                'artist_id' => $artistId->id,
+                'type_id' => 4
+            ]);
+
+        $showId = DB::table('shows')
+            ->select('id')
+            ->where('title', '=', $showTitle)
+            ->get()
+            ->first();
+
+        DB::table('artist_type_show')
+            ->insert([
+                'artist_type_id' => 4,
+                'show_id' => 4
+            ]);
     }
 
 }
